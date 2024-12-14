@@ -1,0 +1,90 @@
+Date,Time,Appliance,Energy_Consumption,Room,Status
+2022-01-01,00:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,01:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,02:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,03:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,04:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,05:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,06:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,07:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,08:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,09:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,10:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,11:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,12:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,13:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,14:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,15:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,16:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,17:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,18:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,19:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,20:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,21:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,22:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,23:00,Refrigerator,1.2,Kitchen,On
+2022-01-01,08:00,TV,0.8,Living Room,Off
+2022-01-01,09:00,TV,0.8,Living Room,On
+2022-01-01,10:00,TV,0.8,Living Room,On
+2022-01-01,11:00,TV,0.8,Living Room,On
+2022-01-01,12:00,TV,0.8,Living Room,Off
+2022-01-01,11:00,EVCar,99.9,Garage,On
+2022-01-01,12:00,EVCar,99.9,Garage,Off
+2022-01-01,00:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,01:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,02:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,03:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,04:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,05:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,06:00,Air Conditioner,2.45,Bedroom,On
+2022-01-01,07:00,Air Conditioner,2.45,Bedroom,Off
+2022-01-01,00:00,Lamp,0.42,Kitchen,Off
+2022-01-01,17:00,Lamp,0.42,Kitchen,On
+2022-01-01,18:00,Lamp,0.42,Kitchen,On
+2022-01-01,19:00,Lamp,0.42,Kitchen,On
+2022-01-01,20:00,Lamp,0.42,Kitchen,On
+2022-01-01,21:00,Lamp,0.42,Kitchen,On
+2022-01-01,22:00,Lamp,0.42,Kitchen,On
+2022-01-01,23:00,Lamp,0.42,Kitchen,Off
+2022-01-01,17:00,Lamp,0.42,Bedroom,On
+2022-01-01,18:00,Lamp,0.42,Bedroom,On
+2022-01-01,19:00,Lamp,0.42,Bedroom,On
+2022-01-01,20:00,Lamp,0.42,Bedroom,On
+2022-01-01,21:00,Lamp,0.42,Bedroom,Off
+2022-01-01,11:00,Fan,0.1,Living Room,On
+2022-01-01,12:00,Fan,0.1,Living Room,Off
+2022-01-01,00:00,Microwave,1.5,Kitchen,On
+2022-01-01,01:00,Microwave,1.5,Kitchen,Off
+2022-01-01,17:00,Microwave,1.5,Kitchen,On
+2022-01-01,18:00,Microwave,1.5,Kitchen,Off
+2022-01-01,00:00,Washing Machine,2.0,Bathroom,On
+2022-01-01,01:00,Washing Machine,2.0,Bathroom,Off
+2022-01-01,08:00,Washing Machine,2.0,Bathroom,On
+2022-01-01,09:00,Washing Machine,2.0,Bathroom,Off
+2022-01-01,00:00,Dishwasher,1.8,Dining Room,On
+2022-01-01,01:00,Dishwasher,1.8,Dining Room,Off
+2022-01-01,17:00,Dishwasher,1.8,Dining Room,On
+2022-01-01,18:00,Dishwasher,1.8,Dining Room,Off
+2022-01-02,00:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,01:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,02:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,03:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,04:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,05:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,06:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,07:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,08:00,Refrigerator,1.2,Kitchen,Off
+2022-01-02,10:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,11:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,12:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,13:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,14:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,15:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,16:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,17:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,18:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,19:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,20:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,21:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,22:00,Refrigerator,1.2,Kitchen,On
+2022-01-02,23:00,Refrigerator,1.2,Kitchen,On

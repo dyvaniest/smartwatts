@@ -1,71 +1,47 @@
 package service
 
 import (
+	"a21hc3NpZ25tZW50/model"
+	repository "a21hc3NpZ25tZW50/repository/fileRepository"
 	"errors"
 	"net/http"
 	"strings"
-
-	"github.com/gorilla/sessions"
 )
 
 type SessionService struct {
-	store       *sessions.CookieStore
-	sessionName string
-	cookieName  string
+	repo repository.SessionsRepository
 }
 
 // NewSessionService membuat instance baru dari SessionService
-func NewSessionService(secretKey string, sessionName string, cookiName string) *SessionService {
-	return &SessionService{
-		store:       sessions.NewCookieStore([]byte(secretKey)),
-		sessionName: sessionName,
-		cookieName:  cookiName,
-	}
+func NewSessionService(repo repository.SessionsRepository) *SessionService {
+	return &SessionService{repo: repo}
 }
 
-// SaveToken menyimpan token ke dalam sesi
-func (s *SessionService) SaveToken(w http.ResponseWriter, r *http.Request, token string) error {
-	session, err := s.store.Get(r, s.sessionName)
-	if err != nil {
-		return err
+// SaveToken menyimpan token ke dalam sesi di database
+func (s *SessionService) SaveToken(email string, token string) error {
+	// Membuat session baru
+	session := model.Session{
+		Email: email,
+		Token: token,
 	}
 
-	// Simpan token ke dalam sesi
-	session.Values["token"] = token
-
-	if err := session.Save(r, w); err != nil {
+	// Simpan session ke repository
+	if err := s.repo.AddSessions(session); err != nil {
 		return err
 	}
-
-	// Simpan token ke dalam cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     s.cookieName,
-		Value:    token,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   false, // Gunakan true jika HTTPS
-	})
 
 	return nil
 }
 
-// GetTokenFromSession mengambil token dari sesi
+// GetTokenFromSession mengambil token berdasarkan cookie, header, atau repository
 func (s *SessionService) GetTokenFromSession(r *http.Request) (string, error) {
-	// Coba ambil token dari sesi
-	session, err := s.store.Get(r, s.sessionName)
-	if err == nil {
-		if token, ok := session.Values["token"].(string); ok && token != "" {
-			return token, nil
-		}
-	}
-
-	// Coba ambil token dari cookie
-	cookie, err := r.Cookie(s.cookieName)
-	if err == nil {
+	// Ambil token dari cookie
+	cookie, err := r.Cookie("auth-token")
+	if err == nil && cookie.Value != "" {
 		return cookie.Value, nil
 	}
 
-	// Coba ambil token dari header Authorization
+	// Ambil token dari header Authorization
 	authHeader := r.Header.Get("Authorization")
 	if authHeader != "" {
 		parts := strings.Split(authHeader, " ")
@@ -74,25 +50,26 @@ func (s *SessionService) GetTokenFromSession(r *http.Request) (string, error) {
 		}
 	}
 
-	return "", errors.New("no token found in session, cookie, or header")
+	return "", errors.New("no token found in cookie or header")
 }
 
-// ClearSession menghapus data sesi
-func (s *SessionService) ClearToken(w http.ResponseWriter, r *http.Request) error {
-	session, err := s.store.Get(r, s.sessionName)
-	if err == nil {
-		session.Options.MaxAge = -1
-		_ = session.Save(r, w)
+// ValidateSession memeriksa apakah token masih valid di database
+func (s *SessionService) ValidateSession(token string) (model.Session, error) {
+	// Cek apakah session tersedia berdasarkan token
+	session, err := s.repo.SessionAvailToken(token)
+	if err != nil {
+		return model.Session{}, err
 	}
 
-	// Hapus token dari cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     s.cookieName,
-		Value:    "",
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   -1,
-	})
+	return session, nil
+}
+
+// ClearToken menghapus token dari repository
+func (s *SessionService) ClearToken(token string) error {
+	// Hapus session berdasarkan token
+	if err := s.repo.DeleteSession(token); err != nil {
+		return err
+	}
 
 	return nil
 }

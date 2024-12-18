@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"a21hc3NpZ25tZW50/db"
 	"a21hc3NpZ25tZW50/handler"
-	"a21hc3NpZ25tZW50/middleware"
+	"a21hc3NpZ25tZW50/model"
+	repository "a21hc3NpZ25tZW50/repository/fileRepository"
+	"a21hc3NpZ25tZW50/service"
 
-	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 )
@@ -36,25 +38,30 @@ func main() {
 
 	log.Println("JWT Secret loaded successfully!")
 
-	// Set up the router
-	router := mux.NewRouter()
-	authMiddleware := middleware.AuthenticationMiddleware
+	// Connect to Database
+	db := db.NewDB()
+	dbCredential := model.Credential{
+		Host:         "localhost",
+		Username:     "postgres",
+		Password:     "dyvaniest123",
+		DatabaseName: "smartwatts",
+		Port:         5432,
+		Schema:       "public",
+	}
 
-	router.HandleFunc("/register", handler.HandleRegister).Methods("POST")
-	router.HandleFunc("/login", handler.HandleLogin).Methods("POST")
+	conn, err := db.Connect(&dbCredential)
+	if err != nil {
+		panic(err)
+	}
 
-	protected := router.PathPrefix("/").Subrouter()
-	protected.Use(authMiddleware)
+	conn.AutoMigrate(&model.User{}, &model.Session{})
 
-	protected.HandleFunc("/data", handler.HandleData).Methods("GET")
-	protected.HandleFunc("/analytics-energy", handler.HandleAnalyticsEnergy).Methods("GET", "POST")
-	protected.HandleFunc("/analyze-ai", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleAnalyzeAI(w, r, tokenAI)
-	}).Methods("POST")
-	protected.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleChat(w, r, tokenAI)
-	}).Methods("POST")
-	protected.HandleFunc("/logout", handler.HandleLogout).Methods("POST")
+	userRepo := repository.NewUserRepository(conn)
+	sessionRepo := repository.NewSessionRepo(conn)
+	userService := service.NewUserService(userRepo)
+	sessionService := service.NewSessionService(sessionRepo)
+
+	router := handler.RunServer(tokenAI, userService, sessionService)
 
 	// Enable CORS
 	corsHandler := cors.New(cors.Options{

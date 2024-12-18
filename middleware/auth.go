@@ -8,14 +8,13 @@ import (
 	"a21hc3NpZ25tZW50/service"
 
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
-var userRepo = repository.NewUserRepository()
-var userService = service.NewUserService(userRepo)
-
-var sessionService = service.NewSessionService("my-secret-key", "auth-session", "auth-token")
+var sessionRepo = repository.NewSessionRepo(&gorm.DB{})
+var sessionService = service.NewSessionService(sessionRepo)
 
 // AuthenticationMiddleware memvalidasi JWT token pada permintaan
 func AuthenticationMiddleware(next http.Handler) http.Handler {
@@ -26,9 +25,9 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Periksa apakah token di-blacklist
-		if userService.IsLoggedOut(tokenStr) {
-			http.Error(w, "Token is invalid or logged out", http.StatusUnauthorized)
+		session, err := sessionService.ValidateSession(tokenStr)
+		if err != nil {
+			http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 			return
 		}
 
@@ -43,9 +42,7 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Jika valid, tambahkan informasi pengguna ke context
-		email := (*claims)["email"].(string)
-		r.Header.Set("Authenticated-Email", email)
+		r.Header.Set("Authenticated-Email", session.Email)
 
 		// Lanjutkan ke handler berikutnya
 		next.ServeHTTP(w, r)

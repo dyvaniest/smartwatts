@@ -22,7 +22,7 @@ const items = [
   getItem("Overview", "1", <AppstoreOutlined />, "/overview"),
   getItem("Analytics", "2", <AreaChartOutlined />, "/analytics"),
   getItem("Chat", "3", <MessageOutlined />, "/chat"),
-  getItem("Blog", "4", <FileSearchOutlined/>, "/blog"),
+  getItem("Articles", "4", <FileSearchOutlined/>, "/blog"),
 ];
 
 const Sidebar = ({ collapsed, onCollapse }) => {

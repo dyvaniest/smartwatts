@@ -2,26 +2,12 @@ import React, { useState } from "react";
 import { Layout, Form, Input, Button, Card, Spin, List, message } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 
+import { formatResponse } from "../utils/cost";
+
 const Chat = () => {
   const [chatQuery, setChatQuery] = useState("");
   const [chatResponses, setChatResponses] = useState([]);
   const [chatLoading, setChatLoading] = useState(false);
-
-  // Format AI response for better display
-  const formatResponse = (response) => {
-    const parts = response.split(/(\*\*[^*]+\*\*|\n)/g); // Split by **bold** or \n
-    return parts.map((part, index) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={index}>{part.slice(2, -2)}</strong> // Render bold text
-        );
-      } else if (part === "\n") {
-        return <br key={index} />; // Render line break
-      } else {
-        return part; // Render plain text
-      }
-    });
-  };
 
   // Handle Chat Submission
   const handleChatSubmit = async () => {

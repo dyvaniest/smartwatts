@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const { Content } = Layout;
 const { Title } = Typography;
 
-function FormData() {
+function FormData({ setModalVisible }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -35,6 +35,7 @@ function FormData() {
       if (response.ok) {
         message.success("Data berhasil ditambahkan!");
         navigate("/overview"); // Navigasi ke halaman utama atau halaman lain setelah sukses
+        setModalVisible(false)
       } else {
         const errorData = await response.json();
         message.error(`Gagal menambahkan data: ${errorData.message || "Unknown error"}`);

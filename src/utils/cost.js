@@ -4,7 +4,7 @@ import { DollarCircleOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
-const EstimatedCostCard = ({ totalConsumption, estimatedCost }) => {
+export const EstimatedCostCard = ({ totalConsumption, estimatedCost }) => {
   return (
     <Card
       title="Estimated Cost"
@@ -19,4 +19,20 @@ const EstimatedCostCard = ({ totalConsumption, estimatedCost }) => {
   );
 };
 
-export default EstimatedCostCard;
+// export default EstimatedCostCard;
+
+// Format AI response for better display
+export const formatResponse = (response) => {
+  const parts = response.split(/(\*\*[^*]+\*\*|\n)/g); // Split by **bold** or \n
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={index}>{part.slice(2, -2)}</strong> // Render bold text
+      );
+    } else if (part === "\n") {
+      return <br key={index} />; // Render line break
+    } else {
+      return part; // Render plain text
+    }
+  });
+};

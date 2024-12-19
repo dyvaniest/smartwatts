@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Typography, Select, Card, Progress } from "antd";
 import { Line } from "@ant-design/plots";
-import EstimatedCostCard from "../../utils/cost";
+import { EstimatedCostCard } from "../../utils/cost";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -183,6 +183,9 @@ function Energy() {
             <Line {...chartConfig} />
           </Card>
         </Col>
+      </Row>
+      <Row>
+          <div>{energyData.ai_suggestion}</div>
       </Row>
     </div>
   );

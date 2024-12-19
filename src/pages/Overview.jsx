@@ -4,7 +4,7 @@ import Rooms from "../components/Rooms";
 import "../index.css";
 import Realtime from "../components/overview/Realtime";
 import PieChart from "../components/overview/PieChart";
-import EstimatedCostCard from "../utils/cost";
+import { EstimatedCostCard } from "../utils/cost";
 import { PlusOutlined } from "@ant-design/icons";
 import FormData from "../components/overview/FormData";
 
@@ -72,7 +72,7 @@ function Overview() {
           
         >
           <div style={{ padding: 0}}>
-              <FormData />
+              <FormData setModalVisible={setIsModalVisible} />
           </div>
         </Modal>
 

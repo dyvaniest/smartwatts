@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, Spin, message, Select } from "antd";
 
 const { Option } = Select;
 
-const Analyze = () => {
+const QuestionAnswer = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [customQuestion, setCustomQuestion] = useState("");
   const [analyzeResult, setAnalyzeResult] = useState("");
@@ -27,13 +27,13 @@ const Analyze = () => {
     setAnalyzeLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/analyze-ai", {
+      const response = await fetch("http://localhost:8080/qna", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ query: analyzeQuery }), 
+        body: JSON.stringify({ question: analyzeQuery }), 
       });
 
       if (!response.ok) {
@@ -41,7 +41,7 @@ const Analyze = () => {
       }
 
       const data = await response.json();
-      setAnalyzeResult(data.result);
+      setAnalyzeResult(data.answer);
       message.success("Analysis completed!");
     } catch (error) {
       message.error("Error: " + error.message);
@@ -60,7 +60,7 @@ const Analyze = () => {
   return (
     <>
       {/* Analyze Section */}
-      <Card title="Analyze Data" style={{ marginBottom: "20px" }}>
+      <Card title="Question Data" style={{ marginBottom: "20px" }}>
         <Form layout="vertical" onFinish={handleAnalyzeSubmit}>
           {/* Dropdown untuk preset pertanyaan */}
           <Form.Item label="Select a Question:">
@@ -98,7 +98,7 @@ const Analyze = () => {
               loading={analyzeLoading}
               style={{ width: "100%" }}
             >
-              Analyze
+              Ask
             </Button>
           </Form.Item>
         </Form>
@@ -118,4 +118,4 @@ const Analyze = () => {
   );
 };
 
-export default Analyze;
+export default QuestionAnswer;

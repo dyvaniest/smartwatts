@@ -24,11 +24,14 @@ function Home({ isLogin, onToggle }) {
       }
 
       const result = await response.json();
-      localStorage.setItem("token", result.token);
-      message.success(isLogin ? "Login successful!" : "Registration successful!");
 
       if (isLogin) {
+        localStorage.setItem("token", result.token);
+        message.success("Login successful!");
         navigate("/overview");
+      } else {
+        message.success("Registration successful!");
+        onToggle(true); // Beralih ke form login setelah registrasi berhasil
       }
 
       console.log(result);
@@ -53,7 +56,7 @@ function Home({ isLogin, onToggle }) {
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Title level={3} style={{ textAlign: "center" }}>
+          <Title level={3} style={{ textAlign: "center", fontFamily: "Rubik" }}>
             {isLogin ? "Sign In" : "Sign Up"}
           </Title>
           <Form
@@ -100,7 +103,7 @@ function Home({ isLogin, onToggle }) {
 
                 <Form.Item
                   name="fullName"
-                  label="Full Name"
+                  label="Fullname"
                   rules={[{ required: true, message: "Please enter your full name" }]}
                 >
                   <Input placeholder="Enter your full name" />

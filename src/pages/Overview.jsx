@@ -5,12 +5,12 @@ import "../index.css";
 import Realtime from "../components/overview/Realtime";
 import PieChart from "../components/overview/PieChart";
 import EstimatedCostCard from "../utils/cost";
-import { RobotFilled } from "@ant-design/icons";
-import Chat from "./Chat";
+import { PlusOutlined } from "@ant-design/icons";
+import FormData from "../components/overview/FormData";
 
 function Overview() {
   const [energyData, setEnergyData] = useState(null);
-  const [isChatVisible, setIsChatVisible] = useState(false); // Kontrol popup
+  const [isModalVisible, setIsModalVisible] = useState(false); // Kontrol popup
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,27 +52,27 @@ function Overview() {
       >
         {/* Float Button untuk membuka Chat */}
         <FloatButton
-          icon={<RobotFilled />}
+          icon={<PlusOutlined />}
           type="primary"
-          tooltip={<div>Chatbot AI</div>}
+          tooltip={<div>Add Appliance</div>}
           style={{
             insetInlineEnd: 24,
             width: 50,
             height: 50,
           }}
-          onClick={() => setIsChatVisible(true)} // Tampilkan popup saat diklik
+          onClick={() => setIsModalVisible(true)} // Tampilkan popup saat diklik
         />
 
         {/* Popup Modal untuk Chat */}
         <Modal
-          open={isChatVisible}
-          onCancel={() => setIsChatVisible(false)} // Tutup popup saat klik close
+          open={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
           footer={null}
-          width={1000}
+          style={{ width: '100vh'}}
           
         >
           <div style={{ padding: 0}}>
-              <Chat />
+              <FormData />
           </div>
         </Modal>
 

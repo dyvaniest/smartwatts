@@ -3,7 +3,6 @@ import { Row, Col, Typography, Select, Card, Progress } from "antd";
 import { Line } from "@ant-design/plots";
 import EstimatedCostCard from "../../utils/cost";
 
-
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -41,14 +40,22 @@ function Energy() {
           },
         });
         const data = await response.json();
-        setAdditionalData(data);
+
+        // Validate and normalize additional data
+        const normalizedData = data.map((item) => ({
+          time: `${item.date} ${item.time}`, // Combine date and time
+          value: item.energy_consumption, // Energy consumption
+          room: item.room, // Room name
+        }));
+
+        setAdditionalData(normalizedData);
       } catch (error) {
         console.error("Error fetching additional data:", error);
       }
     };
 
-    fetchAdditionalData();
     fetchData();
+    fetchAdditionalData();
   }, []);
 
   const handleTimeRangeChange = (value) => {
@@ -62,6 +69,7 @@ function Energy() {
   const chartData = [];
   const colors = ["#1890ff", "#52c41a", "#faad14", "#ff4d4f", "#722ed1"];
 
+  // Process energy data based on selected time range
   Object.entries(
     timeRange === "day"
       ? energyData.daily_consumption
@@ -82,14 +90,16 @@ function Energy() {
     }
   });
 
+  // Add additional data to chart
   additionalData.forEach((item) => {
     chartData.push({
-      time: `${item.Date} ${item.Time}`,
-      value: item.EnergyConsumption,
-      room: item.Room,
+      time: item.time,
+      value: item.value,
+      room: item.room,
     });
   });
 
+  // Calculate total energy consumption
   const totalConsumption = chartData.reduce((acc, item) => acc + item.value, 0);
 
   const chartConfig = {
@@ -137,7 +147,7 @@ function Energy() {
                     <Col span={4}>
                       <Progress
                         type="circle"
-                        percent={((consumption / totalConsumption) * 100).toFixed(2)} // Example normalization
+                        percent={((consumption / totalConsumption) * 100).toFixed(2)} // Normalization for progress
                         width={50}
                         strokeColor={["#52c41a", "#ff4d4f", "#722ed1", "#faad14"][index % 4]}
                       />

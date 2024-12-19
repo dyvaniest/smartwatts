@@ -43,11 +43,11 @@ function History() {
   const processStatusChanges = (rawData) => {
     // Mengelompokkan data berdasarkan Appliance
     const groupedData = rawData.reduce((acc, item) => {
-      const { Appliance } = item;
-      if (!acc[Appliance]) {
-        acc[Appliance] = [];
+      const { appliance } = item;
+      if (!acc[appliance]) {
+        acc[appliance] = [];
       }
-      acc[Appliance].push(item);
+      acc[appliance].push(item);
       return acc;
     }, {});
 
@@ -58,17 +58,17 @@ function History() {
 
       // Filter hanya perubahan status
       applianceData.forEach((record) => {
-        if (record.Status !== previousStatus) {
+        if (record.status !== previousStatus) {
           result.push(record);
-          previousStatus = record.Status;
+          previousStatus = record.status;
         }
       });
     }
 
     // Mengurutkan hasil berdasarkan tanggal dan waktu
     return result.sort((a, b) => {
-      const dateA = new Date(`${a.Date}T${a.Time}`);
-      const dateB = new Date(`${b.Date}T${b.Time}`);
+      const dateA = new Date(`${a.date}T${a.time}`);
+      const dateB = new Date(`${b.date}T${b.time}`);
       return dateA - dateB;
     });
   };
@@ -78,7 +78,7 @@ function History() {
       setFilteredData(data);
     } else {
       const filtered = data.filter(
-        (item) => item.Date === dateString
+        (item) => item.date === dateString
       );
       setFilteredData(filtered);
       setCurrentPage(1);
@@ -115,7 +115,7 @@ function History() {
                   <List.Item.Meta
                     avatar={
                       <Tag
-                        color={item.Status === "On" ? "green" : "red"}
+                        color={item.status === "On" ? "green" : "red"}
                         style={{
                           width: 20,
                           height: 20,
@@ -126,17 +126,17 @@ function History() {
                     }
                     title={
                       <>
-                        <span>{item.Appliance}</span>
+                        <span>{item.appliance}</span>
                         <span style={{ fontSize: "12px", marginLeft: 8 }}>
-                          • {item.Room}
+                          • {item.room}
                         </span>
                       </>
                     }
                     description={
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span>{item.Status === "On" ? "Turn On" : "Turn Off"}</span>
+                        <span>{item.status === "On" ? "Turn On" : "Turn Off"}</span>
                         <span>
-                          {item.Date} {item.Time}
+                          {item.date} {item.time}
                         </span>
                       </div>
                     }

@@ -5,49 +5,56 @@ const { TabPane } = Tabs;
 
 function Rooms() {
   const [rooms, setRooms] = useState([]);
-  const [appliances, setAppliances] = useState([]);
+  const [appliances, setAppliances] = useState({});
   const [selectedRoom, setSelectedRoom] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token");
         const response = await fetch("http://localhost:8080/data", {
           method: "GET",
           headers: {
-              "Content-Type": "application/json",
-              "Authorization":  `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
+
         const rawData = await response.json();
 
+        // Organize data by rooms
         const roomsMap = {};
         rawData.forEach((item) => {
-          if (!roomsMap[item.Room]) {
-            roomsMap[item.Room] = [];
+          if (!roomsMap[item.room]) {
+            roomsMap[item.room] = {};
           }
 
-          const isApplianceExist = roomsMap[item.Room].some(
-            (appliance) => appliance.name === item.Appliance
-          );
-
-          if (!isApplianceExist) {
-            roomsMap[item.Room].push({
-              name: item.Appliance,
-              status: item.Status === "On",
-              energyConsumption: item.EnergyConsumption,
-            });
+          // Store only the first occurrence of an appliance
+          if (!roomsMap[item.room][item.appliance]) {
+            roomsMap[item.room][item.appliance] = {
+              name: item.appliance,
+              status: item.status === "On",
+              energyConsumption: item.energy_consumption,
+              date: item.date,
+              time: item.time,
+            };
           }
         });
 
-        setRooms(Object.keys(roomsMap));
-        setAppliances(roomsMap);
-        setSelectedRoom(Object.keys(roomsMap)[0]); // Default room
+        // Convert room data to required structure
+        const formattedRooms = Object.entries(roomsMap).reduce((acc, [room, appliances]) => {
+          acc[room] = Object.values(appliances); // Get only unique appliances
+          return acc;
+        }, {});
+
+        setRooms(Object.keys(formattedRooms));
+        setAppliances(formattedRooms);
+        setSelectedRoom(Object.keys(formattedRooms)[0]); // Default room
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -72,7 +79,7 @@ function Rooms() {
           {rooms.map((room) => (
             <Col xs={24} sm={12} md={8} lg={6} key={room}>
               <Card title={room} bordered>
-                <p>{appliances[room].length} Appliances</p>
+                <p>{appliances[room]?.length} Appliances</p>
               </Card>
             </Col>
           ))}
@@ -102,6 +109,7 @@ function Rooms() {
                           <strong>{appliance.name}</strong>
                         </p>
                         <p>Energy: {appliance.energyConsumption} kWh</p>
+                        
                         <Switch defaultChecked={appliance.status} />
                       </Card>
                     </Col>

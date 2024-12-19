@@ -9,24 +9,29 @@ function Realtime() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token");
         const energyResponse = await fetch("http://localhost:8080/data", {
           method: "GET",
           headers: {
-              "Content-Type": "application/json",
-              "Authorization":  `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         });
-      
+
+        if (!energyResponse.ok) {
+          throw new Error("Network response was not ok");
+        }
+
         const rawEnergyData = await energyResponse.json();
 
+        // Group and aggregate energy data by time
         const groupedEnergyData = rawEnergyData.reduce((acc, curr) => {
-          const { Time, EnergyConsumption } = curr;
-          acc[Time] = (acc[Time] || 0) + EnergyConsumption;
+          const { time, energy_consumption } = curr; // Use correct JSON keys
+          acc[time] = (acc[time] || 0) + energy_consumption;
           return acc;
         }, {});
 
-        // Convert to chart-ready format
+        // Convert aggregated data into chart-ready format
         const chartData = Object.keys(groupedEnergyData).map((time) => ({
           time,
           value: groupedEnergyData[time],
@@ -69,7 +74,7 @@ function Realtime() {
     },
     animation: {
       appear: {
-        animation: 'path-in',
+        animation: "path-in",
         duration: 1000,
       },
     },
@@ -78,7 +83,14 @@ function Realtime() {
   return (
     <div>
       {loading ? (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
           <Spin size="large" />
         </div>
       ) : (

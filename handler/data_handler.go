@@ -34,6 +34,26 @@ func HandleData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+func HandleAddData(w http.ResponseWriter, r *http.Request) {
+	reqBody := service.EnergyData{}
+
+	err := json.NewDecoder(r.Body).Decode(&reqBody)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	err = fileService.AddDataCSV("data-series.csv", reqBody)
+
+	if err != nil {
+		http.Error(w, "Failed to add data: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Data added successfully"})
+}
+
 // HandleAnalyticsEnergy handles analytics energy requests
 func HandleAnalyticsEnergy(w http.ResponseWriter, r *http.Request) {
 	var request struct {

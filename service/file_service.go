@@ -15,12 +15,12 @@ type FileService struct {
 }
 
 type EnergyData struct {
-	Date              string
-	Time              string
-	Appliance         string
-	EnergyConsumption float64
-	Room              string
-	Status            string
+	Date              string  `json:"date"`
+	Time              string  `json:"time"`
+	Appliance         string  `json:"appliance"`
+	EnergyConsumption float64 `json:"energy_consumption"`
+	Room              string  `json:"room"`
+	Status            string  `json:"status"`
 }
 
 // ReadCSV reads data from a CSV file and converts it into a slice of EnergyData.
@@ -82,6 +82,28 @@ func (f *FileService) WriteCSV(filePath string, data []EnergyData) error {
 			record.Status,
 		})
 	}
+
+	return nil
+}
+
+func (f *FileService) AddDataCSV(filePath string, data EnergyData) error {
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	if err != nil {
+		return err
+	}
+
+	w := csv.NewWriter(file)
+	defer w.Flush()
+
+	// Write rows
+	w.Write([]string{
+		data.Date,
+		data.Time,
+		data.Appliance,
+		strconv.FormatFloat(data.EnergyConsumption, 'f', 2, 64),
+		data.Room,
+		data.Status,
+	})
 
 	return nil
 }

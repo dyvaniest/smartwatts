@@ -174,14 +174,3 @@ func round(val float64, precision int) float64 {
 	p := math.Pow10(precision)
 	return math.Round(val*p) / p
 }
-
-// AddRecord adds a new record to the CSV data.
-// func (f *FileService) AddRecord(filePath string, newRecord EnergyData) error {
-// 	data, err := f.ReadCSV(filePath)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	data = append(data, newRecord)
-// 	return f.WriteCSV(filePath, data)
-// }

@@ -169,3 +169,22 @@ func HandleChat(w http.ResponseWriter, r *http.Request, token string) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
 }
+
+func HandleQnA(w http.ResponseWriter, r *http.Request, token string) {
+	var request struct {
+		Question string `json:"question"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	answer, err := aiService.AnswerQuestion("data-series.csv", request.Question, token)
+	if err != nil {
+		http.Error(w, "Failed to qna with AI: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(answer)
+}

@@ -42,7 +42,7 @@ func (s *AIService) AnalyzeData(csvFilePath, query, token string) (string, error
 		return "", fmt.Errorf("failed to marshal request data: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", "https://api-inference.huggingface.co/models/google/tapas-base-finetuned-wtq", bytes.NewBuffer(reqBodyBytes))
+	req, err := http.NewRequest("POST", "https://api-inference.huggingface.co/models/google/tapas-large-finetuned-wtq", bytes.NewBuffer(reqBodyBytes))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
@@ -134,8 +134,69 @@ func (s *AIService) ChatWithAI(context, query, token string) (model.ChatResponse
 		return model.ChatResponse{}, fmt.Errorf("AI model response is empty or invalid")
 	}
 
-	// Kembalikan hanya teks yang dihasilkan oleh AI
 	return model.ChatResponse{Answer: result[0].GeneratedText}, nil
+}
+
+func (s *AIService) AnswerQuestion(filePath, question, token string) (model.QuestionAnswer, error) {
+	context, err := s.GenerateContextFromCSV(filePath)
+	if err != nil {
+		return model.QuestionAnswer{}, fmt.Errorf("failed to generate context: %w", err)
+	}
+
+	data := map[string]interface{}{
+		"inputs": map[string]string{
+			"context":  context,
+			"question": question,
+		},
+	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return model.QuestionAnswer{}, fmt.Errorf("failed to marshal request data: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return model.QuestionAnswer{}, fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := s.Client.Do(req)
+	if err != nil {
+		return model.QuestionAnswer{}, fmt.Errorf("failed to send request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return model.QuestionAnswer{}, fmt.Errorf("AI model returned non-200 status: %s", string(body))
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return model.QuestionAnswer{}, fmt.Errorf("failed to read AI model response: %w", err)
+	}
+
+	log.Printf("AI Model Response: %s", string(body))
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return model.QuestionAnswer{}, fmt.Errorf("failed to parse AI model response: %w", err)
+	}
+
+	answer, ok := result["answer"].(string)
+	if !ok || answer == "" {
+		return model.QuestionAnswer{}, fmt.Errorf("AI model did not return a valid answer")
+	}
+
+	qa := model.QuestionAnswer{
+		Context:  context,
+		Question: question,
+		Answer:   answer,
+	}
+
+	return qa, nil
 }
 
 func (s *AIService) readCSVAsTable(filePath string) (map[string][]string, error) {
@@ -169,4 +230,30 @@ func (s *AIService) readCSVAsTable(filePath string) (map[string][]string, error)
 	}
 
 	return table, nil
+}
+
+func (s *AIService) GenerateContextFromCSV(filePath string) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return "", fmt.Errorf("failed to read CSV data: %w", err)
+	}
+
+	if len(records) < 2 {
+		return "", fmt.Errorf("insufficient data in CSV")
+	}
+
+	context := "Context: "
+	for _, row := range records[1:] {
+		context += fmt.Sprintf(" On %s at %s, the %s in the %s consumed %s kWh.",
+			row[0], row[1], row[2], row[4], row[3])
+	}
+
+	return context, nil
 }

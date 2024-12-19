@@ -26,13 +26,17 @@ func RunServer(tokenAI string, userService *service.UserService, sessionService 
 	r.HandleFunc("/analytics-energy", HandleAnalyticsEnergy).Methods(http.MethodGet)
 	r.HandleFunc("/data", HandleAddData).Methods(http.MethodPost)
 
-	// AI-related endpoints (requires token middleware)
+	// AI-related endpoints (requires token AI)
 	r.HandleFunc("/analyze-ai", func(w http.ResponseWriter, r *http.Request) {
 		HandleAnalyzeAI(w, r, tokenAI)
 	}).Methods(http.MethodPost)
 
 	r.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
 		HandleChat(w, r, tokenAI)
+	}).Methods(http.MethodPost)
+
+	r.HandleFunc("/qna", func(w http.ResponseWriter, r *http.Request) {
+		HandleQnA(w, r, tokenAI)
 	}).Methods(http.MethodPost)
 
 	return r

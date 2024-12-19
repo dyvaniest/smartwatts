@@ -5,16 +5,13 @@ import (
 	"net/http"
 
 	"a21hc3NpZ25tZW50/model"
-	repository "a21hc3NpZ25tZW50/repository/fileRepository"
 	"a21hc3NpZ25tZW50/service"
-
-	"gorm.io/gorm"
 )
 
-var userRepo = repository.NewUserRepository(&gorm.DB{})
-var userService = service.NewUserService(userRepo)
-var sessionRepo = repository.NewSessionRepo(&gorm.DB{})
-var sessionService = service.NewSessionService(sessionRepo)
+// var userRepo = repository.NewUserRepository(&gorm.DB{})
+// var userService = service.NewUserService(userRepo)
+// var sessionRepo = repository.NewSessionRepo(&gorm.DB{})
+// var sessionService = service.NewSessionService(sessionRepo)
 
 func HandleRegister(w http.ResponseWriter, r *http.Request, userService *service.UserService) {
 	var user model.User

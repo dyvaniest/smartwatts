@@ -34,6 +34,12 @@ type ChatResponse struct {
 	Status        string `json:"status"`
 }
 
+type QuestionAnswer struct {
+	Context  string `json:"context`
+	Question string `json:"question"`
+	Answer   string `json:"answer"`
+}
+
 // User struct menyimpan data pengguna
 type User struct {
 	ID        int       `gorm:"primaryKey;autoIncrement"`

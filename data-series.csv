@@ -88,3 +88,4 @@ Date,Time,Appliance,Energy_Consumption,Room,Status
 2022-01-02,21:00,Refrigerator,1.2,Kitchen,On
 2022-01-02,22:00,Refrigerator,1.2,Kitchen,On
 2022-01-02,23:00,Refrigerator,1.2,Kitchen,On
+2024-12-19,11:08,Lamp,0.80,Rooftop,Off

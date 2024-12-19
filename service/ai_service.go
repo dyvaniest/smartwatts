@@ -90,7 +90,7 @@ func (s *AIService) ChatWithAI(context, query, token string) (model.ChatResponse
 	data := map[string]interface{}{
 		"inputs": query,
 		"parameters": map[string]interface{}{
-			"max_new_tokens": 300,
+			"max_new_tokens": 500,
 		},
 	}
 

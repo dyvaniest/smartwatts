@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"a21hc3NpZ25tZW50/service"
 
@@ -55,7 +57,7 @@ func HandleAddData(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleAnalyticsEnergy handles analytics energy requests
-func HandleAnalyticsEnergy(w http.ResponseWriter, r *http.Request) {
+func HandleAnalyticsEnergy(w http.ResponseWriter, r *http.Request, token string) {
 	var request struct {
 		Query string `json:"query"`
 	}
@@ -78,6 +80,27 @@ func HandleAnalyticsEnergy(w http.ResponseWriter, r *http.Request) {
 	dailyConsumption, weeklyConsumption, monthlyConsumption := fileService.AnalyzeEnergyConsumption(data)
 	roomConsumption := fileService.CalculateRoomEnergyConsumption(data)
 
+	context, err := aiService.GenerateContextFromCSV("data-series.csv")
+	if err != nil {
+		http.Error(w, "Failed to generate context: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	q := fmt.Sprintf(`
+	Take a look at the energy consumption data below.
+	%s
+
+	Give me the best suggestion how to save energy, give me answer with more detail please.
+	`, context)
+
+	chat, err := aiService.ChatWithAI("", q, token)
+	if err != nil {
+		http.Error(w, "Failed to chat with AI: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	answer := strings.Split(chat.Answer, "Output: ")[1]
+
 	// Estimasi biaya listrik
 	costPerKWh := 1500.0
 
@@ -89,6 +112,7 @@ func HandleAnalyticsEnergy(w http.ResponseWriter, r *http.Request) {
 		"monthly_consumption": monthlyConsumption,
 		"room_consumption":    roomConsumption,
 		"estimated_cost":      estimatedCost,
+		"ai_suggestion":       answer,
 	}
 
 	// Mengirimkan respons dalam format JSON

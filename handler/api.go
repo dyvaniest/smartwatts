@@ -23,7 +23,10 @@ func RunServer(tokenAI string, userService *service.UserService, sessionService 
 
 	// Data-related endpoints
 	r.HandleFunc("/data", HandleData).Methods(http.MethodGet)
-	r.HandleFunc("/analytics-energy", HandleAnalyticsEnergy).Methods(http.MethodGet)
+	r.HandleFunc("/analytics-energy", func(w http.ResponseWriter, r *http.Request) {
+		HandleAnalyticsEnergy(w, r, tokenAI)
+	}).Methods(http.MethodGet)
+
 	r.HandleFunc("/data", HandleAddData).Methods(http.MethodPost)
 
 	// AI-related endpoints (requires token AI)
